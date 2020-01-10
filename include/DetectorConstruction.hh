@@ -19,7 +19,7 @@ public:
     virtual void ConstructSDandField() override;
 
 private:
-    std::shared_ptr<LACC> fLACC;
+    LACC* fLACC;
 };
 
 #endif

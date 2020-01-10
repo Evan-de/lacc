@@ -34,7 +34,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto worldPV = new G4PVPlacement(nullptr, G4ThreeVector(), worldLV, "World", nullptr, false, 0);
 
     // LACC
-    fLACC = std::make_shared<LACC>("LACC");
+    fLACC = new LACC("LACC");
     G4double laccHeight = 2*static_cast<G4Box*>(fLACC->GetLogicalVolume()->GetSolid())->GetZHalfLength();
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -laccHeight/2),
                       fLACC->GetLogicalVolume(), "LACC", worldLV, false, 0);

@@ -35,6 +35,25 @@ private:
     G4LogicalVolume* fLACCLV;
 };
 
+class LACCStore: public std::vector< std::shared_ptr<LACC> >
+{
+public:
+    static auto GetInstance()
+    {
+        static LACCStore* fInstance = new LACCStore;
+        return fInstance;
+    }
+    static void Register(std::shared_ptr<LACC> pLACC)
+    { GetInstance()->push_back(pLACC); }
+
+    std::shared_ptr<LACC> GetLACC(const G4String& name) const;
+
+    ~LACCStore() { GetInstance()->clear(); }
+
+private:
+    LACCStore(): std::vector< std::shared_ptr<LACC> >() {}
+};
+
 class LAScintDet
 {
 public:
