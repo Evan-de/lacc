@@ -1,0 +1,13 @@
+# Macro file: run.mac
+
+/run/verbose 1
+/tracking/verbose 0
+
+# gps example (isotropic gamma point source, 1 MeV at origin)
+/gps/particle gamma
+/gps/pos/type Point
+/gps/pos/centre 0 0 100 cm
+/gps/ang/type iso
+/gps/energy 0.662 MeV 
+
+/run/beamOn 10000
