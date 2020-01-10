@@ -4,6 +4,8 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "G4SystemOfUnits.hh"
 
+#include <memory>
+
 class G4VPhysicalVolume;
 class LACC;
 
@@ -17,7 +19,7 @@ public:
     virtual void ConstructSDandField() override;
 
 private:
-    std::unique_ptr<LACC> fLACC;
+    std::shared_ptr<LACC> fLACC;
 };
 
 #endif

@@ -12,7 +12,7 @@ public:
     inline void operator delete(void* aHit);
 
     CCHit();
-    CCHit(G4double eDep, G4ThreeVector pos, G4double time);
+    CCHit(G4double eDep, G4ThreeVector pos, G4double time, G4double weight);
 
     virtual ~CCHit() override;
 
@@ -28,6 +28,8 @@ public:
     G4ThreeVector GetPosition() const { return fPos; }
     void SetTime(G4double time) { fTime = time; }
     G4double GetTime() const { return fTime; }
+    void SetWeight(G4double weight) { fWeight = weight; }
+    G4double GetWeight() const { return fWeight; }
 
     void AddDepEAndPosition(G4double eDep, G4ThreeVector pos)
     {
@@ -39,6 +41,7 @@ private:
     G4double fEDep;
     G4ThreeVector fPos;
     G4double fTime;
+    G4double fWeight;
 };
 
 extern G4ThreadLocal G4Allocator<CCHit>* CCHitAllocator;

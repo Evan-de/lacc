@@ -1,6 +1,5 @@
 #include "ActionInitialization.hh"
-#include "PrimaryGeneratorAction_PG.hh"
-#include "PrimaryGeneratorAction_GPS.hh"
+#include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
 
@@ -18,8 +17,7 @@ void ActionInitialization::BuildForMaster() const
 
 void ActionInitialization::Build() const
 {
-//    SetUserAction(new PrimaryGeneratorAction_PG());
-    SetUserAction(new PrimaryGeneratorAction_GPS());
+    SetUserAction(new PrimaryGeneratorAction());
 
     SetUserAction(new RunAction());
     SetUserAction(new EventAction);

@@ -329,14 +329,14 @@ void LAScintDet::DefineMaterials()
 {
     G4NistManager* nist = G4NistManager::Instance();
 
-    G4Element* nistElH = nist->FindOrBuildElement("H");
-    G4Element* nistElC = nist->FindOrBuildElement("C");
-    G4Element* nistElO = nist->FindOrBuildElement("O");
-    G4Element* nistElSi = nist->FindOrBuildElement("Si");
-    G4Element* nistElTl = nist->FindOrBuildElement("Tl");
-    G4Element* nistElCs = nist->FindOrBuildElement("Cs");
-    G4Element* nistElSb = nist->FindOrBuildElement("Sb");
-    G4Element* nistElRb = nist->FindOrBuildElement("Rb");
+    auto nistElH = nist->FindOrBuildElement("H");
+    auto nistElC = nist->FindOrBuildElement("C");
+    auto nistElO = nist->FindOrBuildElement("O");
+    auto nistElSi = nist->FindOrBuildElement("Si");
+    auto nistElTl = nist->FindOrBuildElement("Tl");
+    auto nistElCs = nist->FindOrBuildElement("Cs");
+    auto nistElSb = nist->FindOrBuildElement("Sb");
+    auto nistElRb = nist->FindOrBuildElement("Rb");
 
     nist->FindOrBuildMaterial("G4_Galactic");
     nist->FindOrBuildMaterial("G4_AIR");
@@ -347,26 +347,26 @@ void LAScintDet::DefineMaterials()
     nist->FindOrBuildMaterial("G4_Pyrex_Glass"); // PMT front glass
     nist->FindOrBuildMaterial("G4_POLYETHYLENE"); // PMT tail
 
-    G4Material* NaI = nist->FindOrBuildMaterial("G4_SODIUM_IODIDE");
-    G4Material* NaITl = new G4Material("NaITl", 3.67*g/cm3, 2, kStateSolid); // crystal
+    auto NaI = nist->FindOrBuildMaterial("G4_SODIUM_IODIDE");
+    auto NaITl = new G4Material("NaITl", 3.67*g/cm3, 2, kStateSolid); // crystal
     NaITl->AddMaterial(NaI, 99.6*perCent);
     NaITl->AddElement(nistElTl, 0.4*perCent);
 
-    G4Material* Polydimethylsiloxane = new G4Material("Polydimethylsiloxane", 0.97*g/cm3, 4, kStateSolid); // BC630 material
+    auto Polydimethylsiloxane = new G4Material("Polydimethylsiloxane", 0.97*g/cm3, 4, kStateSolid); // BC630 material
     Polydimethylsiloxane->AddElement(nistElSi, 1);
     Polydimethylsiloxane->AddElement(nistElO, 1);
     Polydimethylsiloxane->AddElement(nistElC, 2);
     Polydimethylsiloxane->AddElement(nistElH, 6);
 
-    G4Material* FusedSilica = new G4Material("FusedSilica", 2.201*g/cm3, 2, kStateSolid); // Optical window
+    auto FusedSilica = new G4Material("FusedSilica", 2.201*g/cm3, 2, kStateSolid); // Optical window
     FusedSilica->AddElement(nistElSi, 1);
     FusedSilica->AddElement(nistElO, 2);
 
-    G4Material* BC630 = new G4Material("BC630", 1.06*g/cm3, 2, kStateLiquid); // Optical grease
+    auto BC630 = new G4Material("BC630", 1.06*g/cm3, 2, kStateLiquid); // Optical grease
     BC630->AddMaterial(Polydimethylsiloxane, 0.95);
     BC630->AddMaterial(FusedSilica, 0.05);
 
-    G4Material* BialkaliCathode = new G4Material("BialkaliCathode", 3.*g/cm3, 3, kStateSolid);
+    auto BialkaliCathode = new G4Material("BialkaliCathode", 3.*g/cm3, 3, kStateSolid);
     BialkaliCathode->AddElement(nistElSb, 1);
     BialkaliCathode->AddElement(nistElRb, 1);
     BialkaliCathode->AddElement(nistElCs, 1);

@@ -17,8 +17,7 @@ EventAction::EventAction()
     if(!ofs.is_open())
     {
         ofs.open("output/data.txt");
-        ofs << std::fixed;
-        ofs << "evtID\t"
+        ofs << "evtID\tParticleWeight\t"
             << "X1(mm)\tY1(mm)\tZ1(mm)\tE1(MeV)\tT1(ns)\t"
             << "X2(mm)\tY2(mm)\tZ2(mm)\tE2(MeV)\tT2(ns)\t\n";
     }
@@ -43,10 +42,14 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
     G4AutoLock lock(&aMutex);
     ofs << anEvent->GetEventID() << "\t";
+    ofs.precision(5);
+    ofs << std::scientific
+        << (*hitsMap)[0]->GetWeight() << "\t";
     for(const auto& itr: *hitsMap)
     {
         ofs.precision(1);
-        ofs << itr.second->GetPosition().x()/mm << "\t"
+        ofs << std::fixed
+            << itr.second->GetPosition().x()/mm << "\t"
             << itr.second->GetPosition().y()/mm << "\t"
             << itr.second->GetPosition().z()/mm << "\t";
         ofs.precision(3);

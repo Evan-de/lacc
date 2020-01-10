@@ -25,6 +25,7 @@ G4bool CCSensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     G4int cpNo = aStep->GetPreStepPoint()->GetTouchable()->GetReplicaNumber(3);
     G4double time = aStep->GetTrack()->GetGlobalTime();
     G4ThreeVector pos = aStep->GetPostStepPoint()->GetPosition();
+    G4double weight = aStep->GetPreStepPoint()->GetWeight();
 
     CCHit* thisHit;
 
@@ -39,7 +40,7 @@ G4bool CCSensitiveDetector::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
     if(itr==fHitsMap->end())
     {
-        thisHit = new CCHit(eDep, pos, time);
+        thisHit = new CCHit(eDep, pos, time, weight);
         fHitsMap->add(cpNo, thisHit);
     }
 

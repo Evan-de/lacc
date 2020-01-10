@@ -5,6 +5,7 @@
 
 /vis/drawVolume
 /vis/viewer/set/viewpointVector -2 1 -1
+/vis/viewer/set/auxiliaryEdge true
 /vis/viewer/zoomTo 3
 #/vis/viewer/set/auxiliaryEdge true
 

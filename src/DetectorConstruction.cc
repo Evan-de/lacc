@@ -1,5 +1,7 @@
 #include "DetectorConstruction.hh"
 #include "LACCBuilder.hh"
+#include "SpentFuelAssemblyBuilder.hh"
+#include "CCSensitiveDetector.hh"
 
 #include "G4Box.hh"
 #include "G4Tubs.hh"
@@ -11,7 +13,6 @@
 #include "G4PVPlacement.hh"
 
 #include "G4SDManager.hh"
-#include "CCSensitiveDetector.hh"
 
 DetectorConstruction::DetectorConstruction()
 : G4VUserDetectorConstruction()
@@ -33,10 +34,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto worldPV = new G4PVPlacement(nullptr, G4ThreeVector(), worldLV, "World", nullptr, false, 0);
 
     // LACC
-    fLACC = std::make_unique<LACC>("LACC");
+    fLACC = std::make_shared<LACC>("LACC");
     G4double laccHeight = 2*static_cast<G4Box*>(fLACC->GetLogicalVolume()->GetSolid())->GetZHalfLength();
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., -laccHeight/2),
                       fLACC->GetLogicalVolume(), "LACC", worldLV, false, 0);
+
+    // Spent Fuel Assembly
+    auto spentFuelAssembly = new SpentFuelAssembly("SpentFuelAssembly", nistAir);
+    G4double spentFuelAssemblySurfaceDistance = 329.1*mm;
+    G4double spentFuelAssemblyLength =
+            2*static_cast<G4Box*>(spentFuelAssembly->GetLogicalVolume()->GetSolid())->GetYHalfLength();
+    auto spentFuelAssemblyRotMat = new G4RotationMatrix();
+    spentFuelAssemblyRotMat->rotateX(90.*deg);
+    new G4PVPlacement(spentFuelAssemblyRotMat,
+                      G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyLength/2.),
+                      spentFuelAssembly->GetLogicalVolume(), "SpentFuelAssembly", worldLV, false, 0);
 
     return worldPV;
 }
