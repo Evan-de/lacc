@@ -17,7 +17,7 @@ public:
     virtual void ConstructSDandField() override;
 
 private:
-    std::unique_ptr<LACC> fLACC;
+    LACC* fLACC;
 };
 
 #endif

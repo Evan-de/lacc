@@ -33,6 +33,19 @@ LACC::LACC(G4String name, G4double scThk, G4double abThk, G4double sc2abDist)
                       fScatter->GetLogicalVolume(), "Scatter", fLACCLV, false, 0);
     new G4PVPlacement(nullptr, G4ThreeVector(0., 0., - laccHeight/2. + absorberHeight/2.),
                       fAbsorber->GetLogicalVolume(), "Absorber", fLACCLV, false, 1);
+
+    LACCStore::GetInstance()->Register(std::shared_ptr<LACC>(this));
+}
+
+std::shared_ptr<LACC> LACCStore::GetLACC(const G4String& name) const
+{
+    auto pStore = GetInstance();
+    for(const auto& pData: *pStore)
+        if(pData->GetName()==name) return pData;
+
+    G4Exception("LACCStore::GetLACC()", "", JustWarning,
+                G4String("    No LACC exists named '" + name + "'.").c_str());
+    return std::shared_ptr<LACC>(nullptr);
 }
 
 LAScintDet::LAScintDet(G4double crystalThickness)
