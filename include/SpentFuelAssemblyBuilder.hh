@@ -17,7 +17,7 @@ public:
     SpentFuelAssembly(G4String name,
                       G4Material* surrMat,
                       G4int nx = 16,
-                      G4int ny = 3,
+                      G4int ny = 16,
                       G4double interval = 1.285*cm);
 
     void SetName(G4String name) { fName = name; }
@@ -29,12 +29,17 @@ public:
 
     std::shared_ptr<FuelRod> GetFuelRod() const { return std::move(fFuelRod); }
     G4ThreeVector GetFuelRodLocation(const G4int i) const;
+    void SetFuelRodStatus(G4double ratio);
+    void SetFuelRodStatus(std::vector<G4int> fuelRodIDVec) { fFuelRodIDVec = fuelRodIDVec; }
+    void PrintFuelRodStatus(std::ostream& out) const;
+    G4int SampleRandomFuelRodID() const;
 
 private:
     G4String fName;
 
     G4int fNX, fNY;
     G4double fInterval;
+    std::vector<G4int> fFuelRodIDVec;
 
     std::shared_ptr<FuelRod> fFuelRod;
 

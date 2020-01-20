@@ -15,8 +15,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if(!fSpentFuelAssembly)
         fSpentFuelAssembly = SpentFuelAssemblyStore::GetInstance()->GetSpentFuelAssembly("SpentFuelAssembly");
 
-    G4int randomFuelRodCopyNumber =
-        static_cast<G4int>(G4UniformRand()*fSpentFuelAssembly->GetNX()*fSpentFuelAssembly->GetNY());
+    // source position
+    G4int randomFuelRodCopyNumber = fSpentFuelAssembly->SampleRandomFuelRodID();
     auto randomPointInFuelRod = fSpentFuelAssembly->GetFuelRod()->SampleRandomPointInFuelRod();
     auto fuelRodPosition = fSpentFuelAssembly->GetFuelRodLocation(randomFuelRodCopyNumber);
     auto spentFuelAssemblyRotation =

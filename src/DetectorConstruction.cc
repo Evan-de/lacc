@@ -25,7 +25,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
     // World
     G4double worldSize = 10.*m;
-    G4VSolid* worldSol = new G4Box("World", 0.5*worldSize, 0.5*worldSize, 0.5*worldSize);
+    auto worldSol = new G4Box("World", 0.5*worldSize, 0.5*worldSize, 0.5*worldSize);
     auto nistAir = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     auto worldLV = new G4LogicalVolume(worldSol, nistAir, "World");
     auto worldVA = new G4VisAttributes(G4Colour::White());
@@ -41,13 +41,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     // Spent Fuel Assembly
     auto spentFuelAssembly = new SpentFuelAssembly("SpentFuelAssembly", nistAir);
+    spentFuelAssembly->SetFuelRodStatus(1.);
+    spentFuelAssembly->PrintFuelRodStatus(G4cout);
     G4double spentFuelAssemblySurfaceDistance = 329.1*mm;
     G4double spentFuelAssemblyLength =
             2*static_cast<G4Box*>(spentFuelAssembly->GetLogicalVolume()->GetSolid())->GetYHalfLength();
-    auto spentFuelAssemblyRotMat = new G4RotationMatrix();
-    spentFuelAssemblyRotMat->rotateX(90.*deg);
-    new G4PVPlacement(spentFuelAssemblyRotMat,
-                      G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyLength/2.),
+    new G4PVPlacement(G4Transform3D(G4RotationMatrix().rotateX(90.*deg),
+                                    G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyLength/2.)),
                       spentFuelAssembly->GetLogicalVolume(), "SpentFuelAssembly", worldLV, false, 0);
 
     return worldPV;

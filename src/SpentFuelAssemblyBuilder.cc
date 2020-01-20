@@ -9,6 +9,9 @@
 #include "G4VisAttributes.hh"
 #include "G4RandomTools.hh"
 
+#include <algorithm>
+#include <random>
+
 G4bool FuelRod::fDefineMaterialsFlag = false;
 
 SpentFuelAssembly::SpentFuelAssembly(G4String name, G4Material* surrMat, G4int nx, G4int ny, G4double interval)
@@ -16,7 +19,7 @@ SpentFuelAssembly::SpentFuelAssembly(G4String name, G4Material* surrMat, G4int n
 {
     // Geometry tree view
     // - SpentFuelAssembly
-    // | - FuelRod (fNXxfNY)
+    // | - FuelRod (fNX*fNY)
 
     fFuelRod = std::make_shared<FuelRod>();
     G4double fuelRodRadius = static_cast<G4Tubs*>(fFuelRod->GetLogicalVolume()->GetSolid())->GetRMax();
@@ -31,6 +34,8 @@ SpentFuelAssembly::SpentFuelAssembly(G4String name, G4Material* surrMat, G4int n
     new G4PVParameterised("FuelRod", fFuelRod->GetLogicalVolume(), fSpentFuelAssemblyLV,
                                        kXAxis, fNX*fNY, fSpentFuelAssemblyParam);
 
+    for(G4int i = 0; i<fNX*fNY; ++i) fFuelRodIDVec.push_back(i);
+
     SpentFuelAssemblyStore::GetInstance()->Register(std::shared_ptr<SpentFuelAssembly>(this));
 }
 
@@ -44,6 +49,44 @@ G4ThreeVector SpentFuelAssembly::GetFuelRodLocation(const G4int i) const
     }
 
     return fSpentFuelAssemblyParam->GetTranslation(i);
+}
+
+void SpentFuelAssembly::SetFuelRodStatus(G4double ratio)
+{
+    if(ratio<0. || ratio>1.)
+    {
+        G4Exception("SpentFuelAssembly::SetFuelRodStatus()", "", JustWarning,
+                    "    ratio is out of range (must be 0-1).");
+        return;
+    }
+
+    std::vector<G4int> tmpFuelRodIDVec;
+    for(G4int i = 0; i<fNX*fNY; ++i) tmpFuelRodIDVec.push_back(i);
+
+    fFuelRodIDVec.clear();
+
+    std::sample(tmpFuelRodIDVec.begin(), tmpFuelRodIDVec.end(), std::back_inserter(fFuelRodIDVec),
+                static_cast<G4int>(tmpFuelRodIDVec.size()*ratio), std::mt19937{std::random_device{}()});
+}
+
+void SpentFuelAssembly::PrintFuelRodStatus(std::ostream& out) const
+{
+    std::vector<G4int> tmpFuelRodStatus;
+    for(G4int i = 0; i<fNX*fNY; ++i) tmpFuelRodStatus.push_back(0);
+    for(const auto& fuelRodID: fFuelRodIDVec) tmpFuelRodStatus[static_cast<size_t>(fuelRodID)] = 1;
+
+    out << ">> active fuel rods: " << fFuelRodIDVec.size() << "/" << fNX*fNY << G4endl;
+    for(G4int j = 0; j<fNY; ++j)
+    {
+        for(G4int i = 0; i<fNX; ++i)
+            out << tmpFuelRodStatus.at(static_cast<size_t>(i + fNX*j)) << " ";
+        out << G4endl;
+    }
+}
+
+G4int SpentFuelAssembly::SampleRandomFuelRodID() const
+{
+    return fFuelRodIDVec.at(static_cast<size_t>(floor(G4UniformRand()*fFuelRodIDVec.size())));
 }
 
 std::shared_ptr<SpentFuelAssembly> SpentFuelAssemblyStore::GetSpentFuelAssembly(const G4String& name) const
