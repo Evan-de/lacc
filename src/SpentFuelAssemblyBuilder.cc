@@ -75,9 +75,10 @@ void SpentFuelAssembly::PrintFuelRodStatus(std::ostream& out) const
     for(G4int i = 0; i<fNX*fNY; ++i) tmpFuelRodStatus.push_back(0);
     for(const auto& fuelRodID: fFuelRodIDVec) tmpFuelRodStatus[static_cast<size_t>(fuelRodID)] = 1;
 
-    out << ">> active fuel rods: " << fFuelRodIDVec.size() << "/" << fNX*fNY << G4endl;
+    out << "# active fuel rods: " << fFuelRodIDVec.size() << "/" << fNX*fNY << G4endl;
     for(G4int j = 0; j<fNY; ++j)
     {
+        out << "# ";
         for(G4int i = 0; i<fNX; ++i)
             out << tmpFuelRodStatus.at(static_cast<size_t>(i + fNX*j)) << " ";
         out << G4endl;
@@ -110,7 +111,7 @@ FuelRod::FuelRod()
     // | | - Fuel
 
     G4double claddingDiameter = 9.7*mm;
-    G4double claddingHeight = 30.*mm;
+    G4double claddingHeight = 0.5*m;
     auto claddingSol = new G4Tubs("Cladding", 0., claddingDiameter/2., claddingHeight/2., 0., 360.*deg);
     auto zir4 = G4Material::GetMaterial("Zir4");
     fCladdingLV = new G4LogicalVolume(claddingSol, zir4, "Cladding");

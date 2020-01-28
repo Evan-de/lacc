@@ -1,5 +1,6 @@
 #include "EventAction.hh"
 #include "CCHit.hh"
+#include "SpentFuelAssemblyBuilder.hh"
 
 #include "G4RunManager.hh"
 #include "G4SDManager.hh"
@@ -16,10 +17,11 @@ EventAction::EventAction()
     G4AutoLock lock(&aMutex);
     if(!ofs.is_open())
     {
-        ofs.open("output/data.txt");
-        ofs << "evtID\tParticleWeight\t"
-            << "X1(mm)\tY1(mm)\tZ1(mm)\tE1(MeV)\tT1(ns)\t"
-            << "X2(mm)\tY2(mm)\tZ2(mm)\tE2(MeV)\tT2(ns)\t\n";
+        ofs.open("output/coindata.txt");
+        SpentFuelAssemblyStore::GetInstance()->GetSpentFuelAssembly("SpentFuelAssembly")->PrintFuelRodStatus(ofs);
+        ofs << "# evtID\tParticleWeight\t"
+            << "DetID1\tX1(mm)\tY1(mm)\tZ1(mm)\tE1(MeV)\tT1(ns)\t"
+            << "DetID2\tX2(mm)\tY2(mm)\tZ2(mm)\tE2(MeV)\tT2(ns)\t\n";
     }
 }
 
@@ -38,16 +40,18 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     if(!HCE) return;
 
     auto hitsMap = static_cast<CCHitsMap*>(HCE->GetHC(fCCHCID));
-    if(hitsMap->entries()<2) return; // coincidence check
+//    if(hitsMap->entries()==0) return; // empty HC
+    if(hitsMap->entries()<2) return; // coincidence only
 
     G4AutoLock lock(&aMutex);
     ofs << anEvent->GetEventID() << "\t";
     ofs.precision(5);
     ofs << std::scientific
-        << (*hitsMap)[0]->GetWeight() << "\t";
+        << hitsMap->begin()->second->GetWeight() << "\t";
     for(const auto& itr: *hitsMap)
     {
         ofs.precision(1);
+        ofs << itr.first << "\t";
         ofs << std::fixed
             << itr.second->GetPosition().x()/mm << "\t"
             << itr.second->GetPosition().y()/mm << "\t"

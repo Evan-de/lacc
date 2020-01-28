@@ -1,5 +1,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "SpentFuelAssemblyBuilder.hh"
+#include "PrimarySamplingTools.hh"
+
+#include "G4Tubs.hh"
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction()
@@ -15,6 +18,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if(!fSpentFuelAssembly)
         fSpentFuelAssembly = SpentFuelAssemblyStore::GetInstance()->GetSpentFuelAssembly("SpentFuelAssembly");
 
+    G4double particleWeight = 1.;
+    G4double fuelRodHeight = 2*static_cast<G4Tubs*>(fSpentFuelAssembly->GetFuelRod()->GetLogicalVolume()->GetSolid())->GetZHalfLength();
+    particleWeight *= fuelRodHeight/(4.*m);
+
     // source position
     G4int randomFuelRodCopyNumber = fSpentFuelAssembly->SampleRandomFuelRodID();
     auto randomPointInFuelRod = fSpentFuelAssembly->GetFuelRod()->SampleRandomPointInFuelRod();
@@ -28,7 +35,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
             (fuelRodPosition + randomPointInFuelRod).rotate(spentFuelAssemblyRotation.axisAngle());
     fPrimary->SetParticlePosition(srcPos);
 
-    fPrimary->SetParticleMomentumDirection(G4RandomDirection());
+    // source direction
+    auto srcDir = SampleDirectionFromTo(fPrimary->GetParticlePosition(), "LACC", particleWeight, 10.*cm);
+//    auto srcDir = G4RandomDirection();
+    fPrimary->SetParticleMomentumDirection(srcDir);
 
+    // Generate primary
     fPrimary->GeneratePrimaryVertex(anEvent);
+    anEvent->GetPrimaryVertex()->SetWeight(particleWeight);
 }

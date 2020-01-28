@@ -43,11 +43,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     auto spentFuelAssembly = new SpentFuelAssembly("SpentFuelAssembly", nistAir);
     spentFuelAssembly->SetFuelRodStatus(1.);
     spentFuelAssembly->PrintFuelRodStatus(G4cout);
-    G4double spentFuelAssemblySurfaceDistance = 329.1*mm;
-    G4double spentFuelAssemblyLength =
-            2*static_cast<G4Box*>(spentFuelAssembly->GetLogicalVolume()->GetSolid())->GetYHalfLength();
-    new G4PVPlacement(G4Transform3D(G4RotationMatrix().rotateX(90.*deg),
-                                    G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyLength/2.)),
+    G4double spentFuelAssemblySurfaceDistance = 20.*cm;
+//    G4double spentFuelAssemblyLength =
+//            2*static_cast<G4Box*>(spentFuelAssembly->GetLogicalVolume()->GetSolid())->GetYHalfLength();
+//    new G4PVPlacement(G4Transform3D(G4RotationMatrix().rotateX(90.*deg),
+//                                    G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyLength/2.)),
+//                      spentFuelAssembly->GetLogicalVolume(), "SpentFuelAssembly", worldLV, false, 0);
+    G4double spentFuelAssemblyHeight =
+            2*static_cast<G4Box*>(spentFuelAssembly->GetLogicalVolume()->GetSolid())->GetZHalfLength();
+    new G4PVPlacement(G4Transform3D(G4RotationMatrix(),
+                                    G4ThreeVector(0., 0., spentFuelAssemblySurfaceDistance + spentFuelAssemblyHeight/2.)),
                       spentFuelAssembly->GetLogicalVolume(), "SpentFuelAssembly", worldLV, false, 0);
 
     return worldPV;
